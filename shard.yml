@@ -1,0 +1,13 @@
+name: pixvas
+version: 0.1.0
+
+authors:
+  - tbrand <taichir0709@gmail.com>
+
+targets:
+  pixvas:
+    main: src/main.cr
+
+crystal: 0.23.1
+
+license: MIT
