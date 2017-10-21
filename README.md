@@ -1,17 +1,17 @@
 # Pixvas
 
 <h1 align="center">
-    <img src="https://user-images.githubusercontent.com/3483230/31853739-c2c08dd6-b6c8-11e7-94c1-8592118b0516.png" width="400"/>
+    <img src="https://user-images.githubusercontent.com/3483230/31853739-c2c08dd6-b6c8-11e7-94c1-8592118b0516.png" width="200"/>
 </h1>
 
 <p align="center">
-    Create pixel image in your terminal, the concept inspired by [vixl44](https://github.com/sebashwa/vixl44)
+	Create pixel image in your terminal, the concept inspired by <a href="https://github.com/sebashwa/vixl44">vixl44</a>
 </p>
 
-## Examples
+## Gallery
 
 ### ..Sword?
-<img src="https://user-images.githubusercontent.com/3483230/31853792-dd1227de-b6c9-11e7-8ad0-e3542bc1d23d.gif" width="200"/>
+<img src="https://user-images.githubusercontent.com/3483230/31853792-dd1227de-b6c9-11e7-8ad0-e3542bc1d23d.gif" width="180"/>
 
 ## Installation
 
@@ -39,7 +39,7 @@
   c          --- Change color
   d          --- Delete the dot
   g          --- Set background color
-  <Ctl> & c  --- Quit
+  <Ctl-c>    --- Quit
 ```
 
 ## Development
@@ -57,4 +57,4 @@
 
 ## Contributors
 
-- [tbrand](https://github.com/tbrand) tbrand - creator, maintainer
+- [tbrand](https://github.com/tbrand) Taichiro Suzuki - creator, maintainer

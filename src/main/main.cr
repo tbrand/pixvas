@@ -32,7 +32,7 @@ class Main
     puts "  c          --- Change color"
     puts "  d          --- Delete the dot"
     puts "  g          --- Set background color"
-    puts "  <Ctl> & c  --- Quit"
+    puts "  <Ctl-c>    --- Quit"
     puts ""
     exit 0
   end
