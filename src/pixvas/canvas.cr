@@ -68,5 +68,3 @@ module Pixvas
     end
   end
 end
-
-

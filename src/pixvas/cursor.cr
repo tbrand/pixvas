@@ -88,6 +88,13 @@ module Pixvas
       @colors["#{x}:#{y}"]?
     end
 
+    def export
+      file = File.new("./test.svg", "w")
+
+      svg = Svg.new
+      file.puts svg.export(@width, @height, @dot_width, self)
+    end
+
     def quit
       reset
       clear
@@ -113,10 +120,12 @@ module Pixvas
           set_bg
         when 100 # d
           delete
+        when 115 # s
+          export
         when 3   # C-c
           quit
         else
-          # print "Unknown code: #{c.ord}"
+          print "Unknown code: #{c.ord}"
         end
 
         return true
