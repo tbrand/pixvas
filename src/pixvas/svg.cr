@@ -8,9 +8,7 @@ module Pixvas
       @color = Pixvas::Color.get_instance
     end
 
-    # memo: http://www.h2.dion.ne.jp/~defghi/svgMemo/svgMemo_05.htm
-
-    def rect(x : Int32, y : Int32, dot_width : Int32, cursor : Pixvas::Cursor)
+    def rect(x : Int32, y : Int32, dot_width : Int32, cursor : Pixvas::Cursor) : String
       _x = UNIT_WIDTH * dot_width * x
       _y = UNIT_HEIGHT * y
 
@@ -18,8 +16,12 @@ module Pixvas
         return "<rect x=\"#{_x}\" y=\"#{_y}\" width=\"#{UNIT_WIDTH * dot_width}\" height=\"#{UNIT_HEIGHT}\" fill=\"red\"/>"
       end
 
+      ""
+    end
+
+    def bg_rect(width, height) : String
       if color = @color.bg_color
-        return "<rect x=\"#{_x}\" y=\"#{_y}\" width=\"#{UNIT_WIDTH * dot_width}\" height=\"#{UNIT_HEIGHT}\" fill=\"blue\"/>"
+        return "<rect x=\"0\" y=\"0\" width=\"#{width}\" height=\"#{height}\" fill=\"blue\"/>"
       end
 
       ""
@@ -42,7 +44,7 @@ module Pixvas
         end
       end
 
-      hd + tg + ts + rects + te
+      hd + tg + ts + bg_rect(svg_width, svg_height) + rects + te
     end
   end
 end

@@ -101,33 +101,58 @@ module Pixvas
       exit 0
     end
 
+    def input_char?(c) : Bool
+      case c
+      when 'p'
+        up
+      when 'n'
+        down
+      when 'f'
+        forward
+      when 'b'
+        back
+      when 'c'
+        next_color
+      when 'g'
+        set_bg
+      when 'd'
+        delete
+      when 's'
+        export
+      else
+        return false
+      end
+
+      true
+    end
+
+    def input_code?(c) : Bool
+      case c.ord
+      when 32 # <Space>
+        pin
+      when 3 # Ctr-c
+        quit
+      when 16 # Ctr-p
+        up
+      when 14 # Ctr-n
+        down
+      when 6 # Ctr-f
+        forward
+      when 2 # Ctr-b
+        back
+      else
+        return false
+      end
+
+      true
+    end
+
     def wait : Bool
       if c = STDIN.raw &.read_char
-        case c.ord
-        when 112 # p
-          up
-        when 110 # n
-          down
-        when 102 # f
-          forward
-        when 98  # b
-          back
-        when 32  # Space
-          pin
-        when 99  # c
-          next_color
-        when 103 # g
-          set_bg
-        when 100 # d
-          delete
-        when 115 # s
-          export
-        when 3   # C-c
-          quit
-        else
-          print "Unknown code: #{c.ord}"
-        end
+        return true if input_char?(c)
+        return true if input_code?(c)
 
+        # print "Unknown code: #{c.ord}"
         return true
       end
 
