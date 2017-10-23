@@ -89,10 +89,13 @@ module Pixvas
     end
 
     def export
-      file = File.new("./test.svg", "w")
+      filepath = File.expand_path("../../../out/test.svg", __FILE__)
+      file = File.open(filepath, "w")
 
       svg = Svg.new
+
       file.puts svg.export(@width, @height, @dot_width, self)
+      file.close
     end
 
     def quit
