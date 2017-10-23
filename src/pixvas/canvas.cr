@@ -5,7 +5,7 @@ module Pixvas
   class Canvas
     def initialize(@width : Int32, @height : Int32, @dot_width : Int32)
       @color  = Color.get_instance
-      @cursor = Pixvas::Cursor.new(@width, @height, @dot_width)
+      @cursor = Cursor.new(@width, @height, @dot_width)
     end
 
     def dot : String

@@ -1,20 +1,20 @@
 module Pixvas
   class Color
-    COLORS = [
-      :black,
-      :white,
-      :red,
-      :light_red,
-      :green,
-      :light_green,
-      :yellow,
-      :light_yellow,
-      :blue,
-      :light_blue,
-      :cyan,
-      :light_cyan,
-      :magenta,
-    ]
+    COLOR_MAP = {
+      black: "#000",
+      white: "#FFF",
+      red: "#F00",
+      light_red: "#F22",
+      green: "#0F0",
+      light_green: "#2f2",
+      yellow: "#FF0",
+      light_yellow: "#FF2",
+      blue: "#00F",
+      light_blue: "#22F",
+      cyan: "#0FF",
+      light_cyan: "#2FF",
+      magenta: "#A00",
+    }
     
     @@instance : Color = self.new
 
@@ -36,20 +36,28 @@ module Pixvas
       @bg_color = current_color
     end
 
+    def colors
+      COLOR_MAP.keys
+    end
+
+    def hex(color : Symbol) : String
+      COLOR_MAP[color]
+    end
+
     def current_color : Symbol
-      COLORS[@current_color_idx % COLORS.size]
+      colors[@current_color_idx % colors.size]
     end
 
     def draw_panel
       print "\n "
 
-      COLORS.each do |color|
+      colors.each do |color|
         print " ".colorize.back(color)
       end
 
       print " \n "
 
-      COLORS.each do |color|
+      colors.each do |color|
         next print "▲" if current_color == color
         print " "
       end

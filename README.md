@@ -43,9 +43,13 @@
 ```
 
 ## Development
-- [ ] Export the image
-- [ ] Save work
+- [ ] Export the svg image
+- [ ] Export the png image
+- [ ] Save and restore work
 - [ ] Install via brew
+- [ ] Message and command line
+- [ ] Revise UI
+- [ ] Add gallery
 
 ## Contributing
 

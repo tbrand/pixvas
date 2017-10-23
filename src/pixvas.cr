@@ -1,4 +1,4 @@
 require "./pixvas/color"
-require "./pixvas/svg"
+require "./pixvas/export"
 require "./pixvas/cursor"
 require "./pixvas/canvas"
