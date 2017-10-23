@@ -4,6 +4,7 @@ require "../pixvas/cursor"
 module Pixvas
   class Canvas
     def initialize(@width : Int32, @height : Int32, @dot_width : Int32)
+      @command = Command.get_instance
       @color  = Color.get_instance
       @cursor = Cursor.new(@width, @height, @dot_width)
     end
@@ -38,31 +39,29 @@ module Pixvas
       end
     end
 
+    def draw_canvas
+      puts "+" + ("-" * @width * @dot_width) + "+"
+
+      @height.times do |h|
+        print "|"
+
+        (@width).times do |w|
+          pin(w, h)
+        end
+
+        puts "|"
+      end
+
+      puts "+" + ("-" * @width * @dot_width) + "+"      
+    end
+
     def draw
       @cursor.save
       @cursor.hide
       @cursor.reset
-
-      title = "Welcome to Pixvas!".colorize.fore(@color.current_color).mode(:bold).to_s
-
-      puts " >> #{title}"
-      puts "+" + ("-" * @width * @dot_width) + "+"
-
-      @height.times do |h|
-        (@width + 2).times do |w|
-          next print "|" if w == 0
-          next print "|" if w == @width + 1
-
-          pin(w-1, h)
-        end
-
-        puts ""
-      end
-
-      puts "+" + ("-" * @width * @dot_width) + "+"
-
+      @command.draw_panel
+      draw_canvas
       @color.draw_panel
-
       @cursor.restore
       @cursor.show
     end

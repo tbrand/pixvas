@@ -1,55 +1,141 @@
 module Pixvas
   class Cursor
+    module Mode
+      CANVAS = 0
+      COMMAND = 1
+    end
+
     def initialize(@width : Int32, @height : Int32, @dot_width : Int32)
       @x = 0
       @y = 0
+      @mode = Mode::CANVAS
 
+      @command = Command.get_instance
       @color  = Color.get_instance
       @colors = Hash(String, Symbol?).new
     end
 
-    def clear
-      print "\e[2J"
+    def mode_command : Bool
+      return false if @mode == Mode::COMMAND
+      @mode = Mode::COMMAND
+      position(3, 2)
+      true
+    end
+
+    def mode_canvas : Bool
+      return false if @mode == Mode::CANVAS
+      @command.delete_message
+      @mode = Mode::CANVAS
+      position(@x + 2, @y + 4)
+      true
+    end
+
+    def up : Bool
+      return false if @mode == Mode::COMMAND
+      return true unless @y > 0
+      @y -= 1
+      print "\e[A"
+      true
+    end
+
+    def down : Bool
+      return false if @mode == Mode::COMMAND
+      return true unless @y < @height - 1
+      @y += 1
+      print "\e[B"
+      true
+    end
+
+    def forward : Bool
+      return false if @mode == Mode::COMMAND
+      return true unless @x < @width * @dot_width - 1
+      @x += 1
+      print "\e[C"
+      true
+    end
+
+    def back : Bool
+      return false if @mode == Mode::COMMAND
+      return true unless @x > 0
+      @x -= 1
+      print "\e[D"
+      true
+    end
+
+    def next_color : Bool
+      return false if @mode == Mode::COMMAND
+      @color.next
+      true
+    end
+
+    def set_bg : Bool
+      return false if @mode == Mode::COMMAND
+      @color.set_bg
+      true
+    end
+
+    def pin : Bool
+      return false if @mode == Mode::COMMAND
+      @colors["#{@x/@dot_width}:#{@y}"] = @color.current_color
+      true
+    end
+
+    def delete : Bool
+      return false if @mode == Mode::COMMAND
+      @colors["#{@x/@dot_width}:#{@y}"] = nil
+      true
+    end
+
+    def cancel : Bool
+      mode_canvas
+    end
+
+    def enter : Bool
+      mode_canvas
+    end
+
+    def export : Bool
+      # filepath = File.expand_path("../../../out/test.svg", __FILE__)
+      # file = File.open(filepath, "w")
+      #  
+      # svg = Svg.new
+      #  
+      # file.puts svg.export(@width, @height, @dot_width, self)
+      # file.close
+      return false if @mode == Mode::COMMAND
+      @command.set_command(
+        Command::Type::EXPORT,
+        "Export as ([Input].svg) | Enter to export, Ctr-g to cancel",
+      )
+      mode_command
+    end
+
+    def backspace : Bool
+      return false if @mode == Mode::CANVAS
+      true
+    end
+
+    def quit : Bool
+      reset
+      clear
+      exit 0
+      true
     end
 
     def reset
       position(1, 1)
     end
 
-    def canvas_top_left
-      position(2, 1)
-    end
-
     def canvas_inside
-      position(3, 2)
+      position(2, 4)
     end
 
     def position(x : Int32, y : Int32)
-      print "\e[#{x};#{y}H"
+      print "\e[#{y};#{x}H"
     end
 
-    def up
-      return unless @y > 0
-      @y -= 1
-      print "\e[A"
-    end
-
-    def down
-      return unless @y < @height - 1
-      @y += 1
-      print "\e[B"
-    end
-
-    def forward
-      return unless @x < @width * @dot_width - 1
-      @x += 1
-      print "\e[C"
-    end
-
-    def back
-      return unless @x > 0
-      @x -= 1
-      print "\e[D"
+    def clear
+      print "\e[2J"
     end
 
     def save
@@ -68,62 +154,34 @@ module Pixvas
       print "\e[?25h"
     end
 
-    def next_color
-      @color.next
-    end
-
-    def set_bg
-      @color.set_bg
-    end
-
-    def pin
-      @colors["#{@x/@dot_width}:#{@y}"] = @color.current_color
-    end
-
-    def delete
-      @colors["#{@x/@dot_width}:#{@y}"] = nil
-    end
-
     def pinned?(x : Int32, y : Int32) : Symbol?
       @colors["#{x}:#{y}"]?
     end
 
-    def export
-      filepath = File.expand_path("../../../out/test.svg", __FILE__)
-      file = File.open(filepath, "w")
-
-      svg = Svg.new
-
-      file.puts svg.export(@width, @height, @dot_width, self)
-      file.close
-    end
-
-    def quit
-      reset
-      clear
-      exit 0
-    end
-
     def input_char?(c) : Bool
-      case c
-      when 'p'
-        up
-      when 'n'
-        down
-      when 'f'
-        forward
-      when 'b'
-        back
-      when 'c'
-        next_color
-      when 'g'
-        set_bg
-      when 'd'
-        delete
-      when 's'
-        export
+      if @mode == Mode::CANVAS
+        case c
+        when 'p'
+          return up
+        when 'n'
+          return down
+        when 'f'
+          return forward
+        when 'b'
+          return back
+        when 'c'
+          return next_color
+        when 'g'
+          return set_bg
+        when 'd'
+          return delete
+        when 's'
+          return export
+        else
+          return false
+        end
       else
-        return false
+        print c
       end
 
       true
@@ -132,17 +190,23 @@ module Pixvas
     def input_code?(c) : Bool
       case c.ord
       when 32 # <Space>
-        pin
+        return pin
       when 3 # Ctr-c
-        quit
+        return quit
       when 16 # Ctr-p
-        up
+        return up
       when 14 # Ctr-n
-        down
+        return down
       when 6 # Ctr-f
-        forward
+        return forward
       when 2 # Ctr-b
-        back
+        return back
+      when 7 # Ctr-g
+        return cancel
+      when 13 # <Enter>
+        return enter
+      when 127 # <Backspace>
+        return backspace
       else
         return false
       end
@@ -152,10 +216,10 @@ module Pixvas
 
     def wait : Bool
       if c = STDIN.raw &.read_char
-        return true if input_char?(c)
         return true if input_code?(c)
+        return true if input_char?(c)
 
-        # print "Unknown code: #{c.ord}"
+        print "Unknown code: #{c.ord}"
         return true
       end
 
