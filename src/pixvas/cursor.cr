@@ -25,6 +25,19 @@ module Pixvas
     def mode_canvas : Bool
       return false if @mode == Mode::CANVAS
       @command.delete_message
+      sleep 1
+      save
+      sleep 1
+      position(1, 1)
+      sleep 1
+      delete_line
+      sleep 1
+      position(1, 2)
+      sleep 1
+      delete_line
+      sleep 1
+      restore
+      sleep 1
       @mode = Mode::CANVAS
       position(@x + 2, @y + 4)
       true
@@ -92,21 +105,14 @@ module Pixvas
 
     def enter : Bool
       mode_canvas
+      @command.exec_command
     end
 
     def export : Bool
-      # filepath = File.expand_path("../../../out/test.svg", __FILE__)
-      # file = File.open(filepath, "w")
-      #  
-      # svg = Svg.new
-      #  
-      # file.puts svg.export(@width, @height, @dot_width, self)
-      # file.close
       return false if @mode == Mode::COMMAND
       @command.set_command(
         Command::Type::EXPORT,
-        "Export as ([Input].svg) | Enter to export, Ctr-g to cancel",
-      )
+        "Export as ([Input].svg) | Enter to export, Ctr-g to cancel")
       mode_command
     end
 
@@ -152,6 +158,10 @@ module Pixvas
 
     def show
       print "\e[?25h"
+    end
+
+    def delete_line
+      print "\e[K"
     end
 
     def pinned?(x : Int32, y : Int32) : Symbol?

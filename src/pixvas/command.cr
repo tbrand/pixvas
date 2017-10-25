@@ -26,6 +26,22 @@ module Pixvas
     def set_command(@command_type : Int32, @message : String)
     end
 
+    def exec_command
+      case @mode
+      when Type::EXPORT
+        # filepath = File.expand_path("../../../out/test.svg", __FILE__)
+        # file = File.open(filepath, "w")
+        #  
+        # svg = Svg.new
+        #  
+        # file.puts svg.export(@width, @height, @dot_width, self)
+        # file.close
+        puts "fafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafafa"
+      end
+
+      true
+    end
+
     def delete_message
       @message = nil
     end
