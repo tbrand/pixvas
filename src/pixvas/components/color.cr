@@ -1,5 +1,5 @@
 module Pixvas
-  class Color
+  class Color < Component
     COLOR_MAP = {
       black: "#000",
       white: "#FFF",
@@ -15,16 +15,11 @@ module Pixvas
       light_cyan: "#2FF",
       magenta: "#A00",
     }
-    
-    @@instance : Color = self.new
-
-    def self.get_instance : Color
-      @@instance
-    end
 
     getter bg_color : Symbol? = nil
 
     def initialize
+      super
       @current_color_idx = 0
     end
 

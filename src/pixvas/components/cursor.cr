@@ -1,17 +1,17 @@
 module Pixvas
-  class Cursor
+  class Cursor < Component
+
     module Mode
       CANVAS = 0
       COMMAND = 1
     end
 
-    def initialize(@width : Int32, @height : Int32, @dot_width : Int32)
+    def initialize
+      super
+
       @x = 0
       @y = 0
       @mode = Mode::CANVAS
-
-      @command = Command.get_instance
-      @color  = Color.get_instance
       @colors = Hash(String, Symbol?).new
     end
 
@@ -24,20 +24,7 @@ module Pixvas
 
     def mode_canvas : Bool
       return false if @mode == Mode::CANVAS
-      @command.delete_message
-      sleep 1
-      save
-      sleep 1
-      position(1, 1)
-      sleep 1
-      delete_line
-      sleep 1
-      position(1, 2)
-      sleep 1
-      delete_line
-      sleep 1
-      restore
-      sleep 1
+      clear
       @mode = Mode::CANVAS
       position(@x + 2, @y + 4)
       true
@@ -53,7 +40,7 @@ module Pixvas
 
     def down : Bool
       return false if @mode == Mode::COMMAND
-      return true unless @y < @height - 1
+      return true unless @y < context.height - 1
       @y += 1
       print "\e[B"
       true
@@ -61,7 +48,7 @@ module Pixvas
 
     def forward : Bool
       return false if @mode == Mode::COMMAND
-      return true unless @x < @width * @dot_width - 1
+      return true unless @x < context.width * context.dot_width - 1
       @x += 1
       print "\e[C"
       true
@@ -77,25 +64,25 @@ module Pixvas
 
     def next_color : Bool
       return false if @mode == Mode::COMMAND
-      @color.next
+      context.color.next
       true
     end
 
     def set_bg : Bool
       return false if @mode == Mode::COMMAND
-      @color.set_bg
+      context.color.set_bg
       true
     end
 
     def pin : Bool
       return false if @mode == Mode::COMMAND
-      @colors["#{@x/@dot_width}:#{@y}"] = @color.current_color
+      @colors["#{@x/context.dot_width}:#{@y}"] = context.color.current_color
       true
     end
 
     def delete : Bool
       return false if @mode == Mode::COMMAND
-      @colors["#{@x/@dot_width}:#{@y}"] = nil
+      @colors["#{@x/context.dot_width}:#{@y}"] = nil
       true
     end
 
@@ -105,12 +92,12 @@ module Pixvas
 
     def enter : Bool
       mode_canvas
-      @command.exec_command
+      context.command.exec_command
     end
 
     def export : Bool
       return false if @mode == Mode::COMMAND
-      @command.set_command(
+      context.command.set_command(
         Command::Type::EXPORT,
         "Export as ([Input].svg) | Enter to export, Ctr-g to cancel")
       mode_command

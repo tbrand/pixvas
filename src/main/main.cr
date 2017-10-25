@@ -38,8 +38,8 @@ class Main
   end
 
   def run
-    canvas = Pixvas::Canvas.new(@width, @height, @dot_width)
-    canvas.wait
+    context = Pixvas::Context.new(@width, @height, @dot_width)
+    context.run
   end
 end
 
