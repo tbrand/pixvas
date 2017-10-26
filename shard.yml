@@ -11,3 +11,7 @@ targets:
 crystal: 0.23.1
 
 license: MIT
+
+dependencies:
+  crt:
+    github: maiha/crt.cr

@@ -1,0 +1,6 @@
+version: 1.0
+shards:
+  crt:
+    github: maiha/crt.cr
+    version: 0.3.0
+
