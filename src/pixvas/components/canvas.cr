@@ -1,25 +1,11 @@
-require "colorize"
-
 module Pixvas
   class Canvas < Component
-    DOT_WIDTH = 2
-
     def initialize
       dot_count_x = 10
       dot_count_y = 10
+      @colors = Hash(String, Crt::Color).new
 
-      super(3, 3, dot_count_x * DOT_WIDTH + 2, dot_count_y + 2)
-
-      @dot_size = 2
-      @colors = Array(Array(Int32)).new
-
-      dot_count_x.times do |x_idx|
-        @colors.push(Array(Int32).new)
-
-        dot_count_y.times do |y_idx|
-          @colors[x_idx].push(0)
-        end
-      end
+      super(0, 0, dot_count_x * DOT_WIDTH + 2, dot_count_y + 2)
     end
 
     def refresh
@@ -27,11 +13,34 @@ module Pixvas
       @window.refresh
     end
 
+    def up
+      return unless @cy > 1
+      @cy -= 1
+    end
+
+    def down
+      return unless @cy < @h - 2
+      @cy += 1
+    end
+
+    def left
+      return unless @cx > 2
+      @cx -= 2
+    end
+
+    def right
+      return unless @cx < @w - 3
+      @cx += 2
+    end
+
     def pin
-      @colors[@cx][@cy] = -1
-      dot = Crt::ColorPair.new(Crt::Color::Default, Crt::Color::Red)
-      @window.attribute_on dot
-      @window.print(@cy, @cx, " " * DOT_WIDTH)
+      dot_color = Crt::ColorPair.new(Crt::Color::Default, context.color.current)
+
+      @window.attribute_on dot_color
+      @window.print(@cy, DOT_WIDTH * ((@cx-1)/DOT_WIDTH) + 1, " " * DOT_WIDTH)
+      @window.attribute_off dot_color
+
+      @colors["#{@cx}:#{@cy}"] = context.color.current
     end
 
     def wait
@@ -56,6 +65,8 @@ module Pixvas
           right
         when 32
           pin
+        when 99
+          context.color.next
         end
 
         refresh
